@@ -384,13 +384,17 @@ func (g *Git) getUpstreamIcon() string {
 		if strings.HasPrefix(url, "http") {
 			return url
 		}
+		url = strings.TrimPrefix(url, "ssh://")
 		url = strings.TrimPrefix(url, "git://")
 		url = strings.TrimPrefix(url, "git@")
 		url = strings.TrimSuffix(url, ".git")
-		url = strings.ReplaceAll(url, ":", "/")
 		return fmt.Sprintf("https://%s", url)
 	}
+
 	g.RawUpstreamURL = g.getRemoteURL()
+	if len(g.RawUpstreamURL) == 0 {
+		return ""
+	}
 	g.UpstreamURL = cleanSSHURL(g.RawUpstreamURL)
 
 	// allow overrides first
